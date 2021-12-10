@@ -1,5 +1,6 @@
 import os
 import unittest
+
 import main
 
 
@@ -12,6 +13,17 @@ class SortingTest(unittest.TestCase):
             input_clone_1 = data.copy()
             input_clone_2 = data.copy()
             main.quick_sort(input_clone_1)
+            input_clone_2.sort()
+            self.assertListEqual(input_clone_1, input_clone_2)
+
+    def test_merge_sort(self):
+        directory = '../inputs'
+        files = [os.path.join(directory, x) for x in os.listdir(directory)]
+        for file in files:
+            data = main.read_all(file)
+            input_clone_1 = data.copy()
+            input_clone_2 = data.copy()
+            main.merge_sort(input_clone_1)
             input_clone_2.sort()
             self.assertListEqual(input_clone_1, input_clone_2)
 

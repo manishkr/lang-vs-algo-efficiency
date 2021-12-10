@@ -7,6 +7,7 @@ struct SortData {
     size: usize,
     default_sort_time: Duration,
     quick_sort_time: Duration,
+    merge_sort_time: Duration,
 }
 
 fn partition(input: &mut Vec<i64>, start: isize, end: isize) -> isize {
@@ -36,6 +37,49 @@ fn do_quick_sort(input: &mut Vec<i64>, start: isize, end: isize) {
 fn quick_sort(input: &mut Vec<i64>) {
     let last_index = input.len() as isize - 1;
     do_quick_sort(input, 0, last_index);
+}
+
+fn merge(input: &mut Vec<i64>, left: &Vec<i64>, right: &Vec<i64>) {
+    let mut i = 0;
+    let mut j = 0;
+    let mut k = 0;
+
+    while i < left.len() && j < right.len() {
+        if left[i] <= right[j] {
+            input[k] = left[i];
+            i += 1;
+        } else {
+            input[k] = right[j];
+            j += 1;
+        }
+        k += 1;
+    }
+
+    if i < left.len() {
+        input[k..].copy_from_slice(&left[i..])
+    }
+
+    if j < right.len() {
+        input[k..].copy_from_slice(&right[j..])
+    }
+}
+
+fn merge_sort(input: &mut Vec<i64>) {
+    if input.len() <= 1 {
+        return;
+    }
+
+    let mid = input.len() / 2;
+    let left = &input[0..mid];
+    let right = &input[mid..];
+
+    let mut left_vec = left.to_vec();
+    let mut right_vec = right.to_vec();
+
+    merge_sort(&mut left_vec);
+    merge_sort(&mut right_vec);
+
+    merge(input, &left_vec, &right_vec)
 }
 
 fn default_sort(input: &mut Vec<i64>) {
@@ -73,10 +117,12 @@ fn main() {
         let input = read_all::<String>(&file_name[..]);
         let default_sort_duration = runtime_average(&input, 10, &default_sort);
         let quick_sort_duration = runtime_average(&input, 10, &quick_sort);
+        let merge_sort_duration = runtime_average(&input, 10, &merge_sort);
         let sort_data = SortData {
             size: input.len(),
             default_sort_time: default_sort_duration,
             quick_sort_time: quick_sort_duration,
+            merge_sort_time: merge_sort_duration,
         };
         sort_data_vec.push(sort_data);
     }
@@ -84,8 +130,8 @@ fn main() {
 
     for item in sort_data_vec {
         println!(
-            "|{:?} | {:?} | {:?} |",
-            item.size, item.default_sort_time, item.quick_sort_time
+            "|{:?} | {:?} | {:?} | {:?} |",
+            item.size, item.default_sort_time, item.quick_sort_time, item.merge_sort_time
         )
     }
 }
@@ -103,6 +149,19 @@ mod tests {
             let mut input_clone_1 = input.to_vec();
             let mut input_clone_2 = input.to_vec();
             quick_sort(&mut input_clone_1);
+            input_clone_2.sort();
+            assert_eq!(input_clone_1, input_clone_2)
+        }
+    }
+    #[test]
+    fn test_merge_sort() {
+        let files = fs::read_dir("../inputs").unwrap();
+        for file in files {
+            let file_name = file.unwrap().path().display().to_string();
+            let input = read_all::<String>(&file_name[..]);
+            let mut input_clone_1 = input.to_vec();
+            let mut input_clone_2 = input.to_vec();
+            merge_sort(&mut input_clone_1);
             input_clone_2.sort();
             assert_eq!(input_clone_1, input_clone_2)
         }
