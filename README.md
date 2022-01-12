@@ -1,5 +1,5 @@
-# Languate vs Algorithm Efficiency
-- This is implementation like most developer do not the most optimized like using unsafe code for rust and numpy for Python
+# Language vs Algorithm Efficiency
+- This is implementation like most developer do, not the most optimized like using unsafe code for rust and numpy for Python
 - Complexity
   - Rust
     - Default Sort : https://doc.rust-lang.org/std/primitive.slice.html#method.sort
