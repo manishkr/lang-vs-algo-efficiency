@@ -59,9 +59,8 @@ fn runtime_average(
 ) -> Duration {
   let mut sum = Duration::new(0, 0);
   for _ in 0..count {
-    let input_clone = input.to_vec();
     let now = Instant::now();
-    searcher(&input_clone, element);
+    searcher(&input, element);
     sum += now.elapsed();
   }
   return sum.div(count as u32);
@@ -101,8 +100,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-  use super::*;
   use rand::Rng;
+
+  use super::*;
 
   #[test]
   fn test_linear_search() {

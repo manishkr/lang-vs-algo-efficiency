@@ -71,9 +71,8 @@ def binary_search_recursive(input, element):
 def runtime_average(input_list, element, count, method):
     sum = 0
     for _ in range(0, count):
-        input_clone = input_list.copy()
         start = time.process_time()
-        method(input_clone, element)
+        method(input_list, element)
         sum += time.process_time() - start
 
     return sum * 1000 / count
